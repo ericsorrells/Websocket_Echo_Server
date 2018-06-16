@@ -1,2 +1,2 @@
-# simple-websocket-echo-server
+# WebSocket Echo Server
 Simple WebSocket echo server for Node.js
