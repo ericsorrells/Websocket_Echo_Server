@@ -1,19 +1,29 @@
-var port = 8080,
-	WebSocketServer = require('ws').Server,
-	wss = new WebSocketServer({ port: port });
+const serverPort = process.env.PORT || 3001,
+  express = require("express"),
+  http = require("http"),
+  WebSocket = require("ws"),
+  app = express(),
+  server = http.createServer(app),
+  websocketServer = new WebSocket.Server({ server });
 
-console.log('listening on port: ' + port);
+//when a websocket connection is established
+websocketServer.on('connection', (webSocketClient) => {
+  console.log('CONECTING')
 
-wss.on('connection', function connection(ws) {
+  //when a message is received
+  webSocketClient.on('message', (message) => {
 
-	ws.on('message', function(message) {
+    //for each websocket client
+    websocketServer
+      .clients
+      .forEach(client => {
+        //send the client the current message
+        client.send(message);
+      });
+  });
+});
 
-		console.log('message: ' + message);
-		ws.send('echo: ' + message);
-
-	});
-
-	console.log('new client connected!');
-	ws.send('connected!');
-
+//start the web server
+server.listen(serverPort, () => {
+  console.log(`Websocket server started on port ` + serverPort);
 });
